@@ -6,6 +6,8 @@ import com.app.medibear.service.SleepService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/sleep")
 public class SleepController {
@@ -32,5 +34,10 @@ public class SleepController {
     public ResponseEntity<SleepData> predictOptimal(@PathVariable("id") Long id) {
         SleepData record = sleepService.updateOptimalSleepRange(sleepService.findById(id));
         return ResponseEntity.ok(record);
+    }
+    
+    @GetMapping("/recent")
+    public List<SleepData> getRecentSleepHours(@RequestParam ("userId") Long userId) {
+    	return sleepService.getRecentSleepHours(userId);
     }
 }

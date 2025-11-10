@@ -4,6 +4,7 @@ import com.app.medibear.model.SleepData;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 @Mapper
@@ -12,4 +13,6 @@ public interface SleepMapper {
     void insert(SleepData data);
     void updateFatigue(SleepData data);
     void updateOptimal(SleepData data);
+    
+    List<SleepData> getRecentSleepHours(@Param("userId") Long userId);
 }
