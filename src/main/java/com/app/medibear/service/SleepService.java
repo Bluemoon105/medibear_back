@@ -9,8 +9,10 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Map;
 
 @Service
@@ -120,5 +122,12 @@ public class SleepService {
     public SleepData findById(Long id) {
         return sleepMapper.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Record not found: " + id));
+    }
+    
+    /** 5) 최근 7일간의 수면 기록 조회**/
+    public List<SleepData> getRecentSleepHours(Long userId) {
+    	List<SleepData> list = sleepMapper.getRecentSleepHours(userId);
+    	Collections.reverse(list);
+    	return list;
     }
 }

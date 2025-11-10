@@ -53,5 +53,14 @@
         updated_at = NOW()
     WHERE id = #{id}
   </update>
+  
+    <!-- 💤 최근 7일 수면시간 데이터 조회 -->
+  <select id="getRecentSleepHours" resultType="com.app.medibear.model.SleepData">
+    SELECT *
+    FROM daily_activities
+    WHERE user_id = #{userId}
+    ORDER BY date DESC
+    LIMIT 7
+  </select>
 
 </mapper>
