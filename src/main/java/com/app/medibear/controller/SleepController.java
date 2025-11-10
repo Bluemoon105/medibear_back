@@ -19,9 +19,17 @@ public class SleepController {
     }
 
     @PostMapping("/activities")
-    public ResponseEntity<SleepData> saveActivity(@RequestBody UserInputRequest input) {
-        SleepData saved = sleepService.saveInitialRecord(input);
-        return ResponseEntity.ok(saved);
+    public ResponseEntity<?> saveActivity(@RequestBody UserInputRequest input) {
+        try {
+            SleepData saved = sleepService.saveInitialRecord(input);
+            return ResponseEntity.ok(saved);
+        } catch (IllegalStateException e) {
+            // 하루에 이미 입력된 경우
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            // 그 외 예외
+            return ResponseEntity.internalServerError().body("서버 오류: " + e.getMessage());
+        }
     }
 
     @PostMapping("/activities/{id}/predict-fatigue")

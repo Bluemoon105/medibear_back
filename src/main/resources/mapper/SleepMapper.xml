@@ -21,10 +21,12 @@
     <result column="updated_at" property="updatedAt"/>
   </resultMap>
 
+<!--특정 Id로 조회-->
   <select id="findById" resultMap="SleepDataMap">
     SELECT * FROM daily_activities WHERE id = #{id}
   </select>
-
+	
+	<!--새 기록 삽입-->
   <insert id="insert" useGeneratedKeys="true" keyProperty="id">
     INSERT INTO daily_activities (
       user_id, date, sleep_hours, caffeine_mg, alcohol_consumption,
@@ -38,6 +40,7 @@
     )
   </insert>
 
+	<!--피로도 업데이트-->
   <update id="updateFatigue">
     UPDATE daily_activities
     SET predicted_sleep_quality = #{predictedSleepQuality},
@@ -46,7 +49,8 @@
         updated_at = NOW()
     WHERE id = #{id}
   </update>
-
+	
+	<!--수면 시간 예측-->
   <update id="updateOptimal">
     UPDATE daily_activities
     SET recommended_sleep_range = #{recommendedSleepRange},
@@ -62,5 +66,12 @@
     ORDER BY date DESC
     LIMIT 7
   </select>
-
+  
+  <!--오늘 이미 입력된 기록이 있는지 확인-->
+   <select id="existsTodayRecord" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM daily_activities
+    WHERE user_id = #{userId}
+      AND date = #{today}
+  </select>
 </mapper>

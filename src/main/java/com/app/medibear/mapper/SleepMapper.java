@@ -4,6 +4,7 @@ import com.app.medibear.model.SleepData;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,4 +16,6 @@ public interface SleepMapper {
     void updateOptimal(SleepData data);
     
     List<SleepData> getRecentSleepHours(@Param("userId") Long userId);
+    
+    boolean existsTodayRecord(@Param("userId") Long userId, @Param("today") LocalDate today);
 }

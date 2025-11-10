@@ -36,6 +36,14 @@ public class SleepService {
 
     /** 1) 1차 저장 **/
     public SleepData saveInitialRecord(UserInputRequest input) {
+    	Long userId = input.getUserId();
+    	LocalDate today = LocalDate.now();
+    	
+    	boolean existsToday = sleepMapper.existsTodayRecord(userId, today);
+    	if (existsToday) {
+    		throw new IllegalStateException("오늘은 이미 활동량이 등록되었습니다.");
+    	}
+    	
         SleepData record = new SleepData();
         record.setUserId(input.getUserId());
         record.setDate(LocalDate.now());
