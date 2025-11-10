@@ -12,7 +12,7 @@ public class LLMService {
 
     private final WebClient webClient;
 
-    public LLMService(@Value("${fastapi.base-url}") String baseUrl, WebClient.Builder builder) {
+    public LLMService(@Value("${cors.fastapi.url}") String baseUrl, WebClient.Builder builder) {
         this.webClient = builder.baseUrl(baseUrl).build();
     }
 

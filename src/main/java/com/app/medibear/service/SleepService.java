@@ -23,7 +23,7 @@ public class SleepService {
     public SleepService(
             SleepMapper sleepMapper,
             UserService userService,
-            @Value("${fastapi.base-url}") String fastApiBaseUrl
+            @Value("${cors.fastapi.url}") String fastApiBaseUrl
     ) {
         this.sleepMapper = sleepMapper;
         this.userService = userService;
