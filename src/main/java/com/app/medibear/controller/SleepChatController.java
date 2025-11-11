@@ -22,10 +22,10 @@ public class SleepChatController {
      */
     @PostMapping("/message")
     public ResponseEntity<Map<String, Object>> chat(@RequestBody Map<String, Object> body) {
-        Long userId = ((Number) body.get("user_id")).longValue();
+        String userId = (String) body.get("user_id"); // ✅ String으로 변경
         String message = (String) body.get("message");
 
-        String response = llmService.chatGeneral(userId, message);
+        String response = llmService.chatGeneral(userId, message); // ✅ LLMService도 String으로 맞춰야 함
         return ResponseEntity.ok(Map.of("response", response));
     }
 
@@ -34,7 +34,7 @@ public class SleepChatController {
      * GET /chat/report/daily/{userId}
      */
     @GetMapping("/report/daily/{userId}")
-    public ResponseEntity<Map<String, Object>> dailyReport(@PathVariable("userId") Long userId) {
+    public ResponseEntity<Map<String, Object>> dailyReport(@PathVariable("userId") String userId) {
         String report = llmService.getDailyReport(userId);
         return ResponseEntity.ok(Map.of("report", report));
     }
@@ -44,7 +44,7 @@ public class SleepChatController {
      * GET /chat/report/weekly/{userId}
      */
     @GetMapping("/report/weekly/{userId}")
-    public ResponseEntity<Map<String, Object>> weeklyReport(@PathVariable("userId") Long userId) {
+    public ResponseEntity<Map<String, Object>> weeklyReport(@PathVariable("userId") String userId) { 
         String report = llmService.getWeeklyReport(userId);
         return ResponseEntity.ok(Map.of("report", report));
     }
@@ -54,7 +54,7 @@ public class SleepChatController {
      * GET /chat/history/{userId}
      */
     @GetMapping("/history/{userId}")
-    public ResponseEntity<Map<String, Object>> history(@PathVariable("userId") Long userId) {
+    public ResponseEntity<Map<String, Object>> history(@PathVariable("userId") String userId) { 
         Map<String, Object> history = llmService.getChatHistory(userId);
         return ResponseEntity.ok(history);
     }

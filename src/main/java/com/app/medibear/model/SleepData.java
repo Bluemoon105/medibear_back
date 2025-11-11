@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class SleepData {
 
     private Long id;
-    private Long userId;
+    private String userId;
     private LocalDate date;
     private Double sleepHours;
     private Double caffeineMg;
@@ -39,11 +39,11 @@ public class SleepData {
         this.id = id;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

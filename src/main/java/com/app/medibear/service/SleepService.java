@@ -32,9 +32,9 @@ public class SleepService {
                 .build();
     }
 
-    /** 1) 활동 데이터 저장 (하루 1회) **/
+    /** 1️⃣ 활동 데이터 저장 (하루 1회 제한) **/
     public SleepData saveInitialRecord(UserInputRequest input) {
-        Long userId = input.getUserId();
+        String userId = input.getUserId(); 
         LocalDate today = LocalDate.now();
 
         boolean existsToday = sleepMapper.existsTodayRecord(userId, today);
@@ -56,14 +56,14 @@ public class SleepService {
         return record;
     }
 
-    /** 2) 오늘 데이터 조회 **/
-    public SleepData findTodayRecord(Long userId, LocalDate date) {
+    /** 2️⃣ 오늘 데이터 조회 **/
+    public SleepData findTodayRecord(String userId, LocalDate date) { 
         return sleepMapper.findTodayRecord(userId, date).orElse(null);
     }
 
-    /** 3) 피로도 예측 **/
+    /** 3️⃣ 피로도 예측 **/
     public SleepData updateFatiguePrediction(SleepData record) {
-        User user = userService.getUserById(record.getUserId());
+        User user = userService.getUserById(record.getUserId()); 
         int age = userService.calculateAge(user.getBirthDate());
         int genderInt = userService.toGenderInt(user.getGender());
 
@@ -98,7 +98,7 @@ public class SleepService {
         return record;
     }
 
-    /** 4) 개인 최적 수면시간 예측 **/
+    /** 4️⃣ 개인 최적 수면시간 예측 **/
     public SleepData updateOptimalSleepRange(SleepData record) {
         User user = userService.getUserById(record.getUserId());
         int age = userService.calculateAge(user.getBirthDate());
@@ -131,8 +131,8 @@ public class SleepService {
         return record;
     }
 
-    /** 5) 최근 7일 기록 **/
-    public List<SleepData> getRecentSleepHours(Long userId) {
+    /** 5️⃣ 최근 7일 기록 **/
+    public List<SleepData> getRecentSleepHours(String userId) {
         List<SleepData> list = sleepMapper.getRecentSleepHours(userId);
         Collections.reverse(list);
         return list;

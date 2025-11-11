@@ -14,7 +14,7 @@ public interface SleepMapper {
     void insert(SleepData data);
     void updateFatigue(SleepData data);
     void updateOptimal(SleepData data);
-    List<SleepData> getRecentSleepHours(@Param("userId") Long userId);
-    boolean existsTodayRecord(@Param("userId") Long userId, @Param("today") LocalDate today);
-    Optional<SleepData> findTodayRecord(@Param("userId") Long userId, @Param("date") LocalDate date);
+    List<SleepData> getRecentSleepHours(@Param("userId") String userId);
+    boolean existsTodayRecord(@Param("userId") String userId, @Param("today") LocalDate today);
+    Optional<SleepData> findTodayRecord(@Param("userId") String userId, @Param("date") LocalDate date);
 }

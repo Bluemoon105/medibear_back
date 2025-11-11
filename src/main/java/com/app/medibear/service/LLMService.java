@@ -17,7 +17,7 @@ public class LLMService {
     }
 
     //일반 대화
-    public String chatGeneral(Long userId, String message) {
+    public String chatGeneral(String userId, String message) {
         Map<String, Object> body = Map.of(
             "user_id", userId,
             "message", message
@@ -37,7 +37,7 @@ public class LLMService {
     }
 
     //일간 리포트
-    public String getDailyReport(Long userId) {
+    public String getDailyReport(String userId) {
         Map<String, Object> resp = webClient.get()
                 .uri("/sleepchat/report/daily/" + userId)
                 .retrieve()
@@ -51,7 +51,7 @@ public class LLMService {
     }
 
     //주간 리포트
-    public String getWeeklyReport(Long userId) {
+    public String getWeeklyReport(String userId) {
         Map<String, Object> resp = webClient.get()
                 .uri("/sleepchat/report/weekly/" + userId)
                 .retrieve()
@@ -65,7 +65,7 @@ public class LLMService {
     }
 
     //대화 기록
-    public Map<String, Object> getChatHistory(Long userId) {
+    public Map<String, Object> getChatHistory(String userId) {
         return webClient.get()
                 .uri("/sleepchat/history/" + userId)
                 .retrieve()

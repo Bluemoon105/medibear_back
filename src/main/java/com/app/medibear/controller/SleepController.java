@@ -27,17 +27,15 @@ public class SleepController {
             SleepData saved = sleepService.saveInitialRecord(input);
             return ResponseEntity.ok(saved);
         } catch (IllegalStateException e) {
-            // 하루에 이미 입력된 경우
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            // 그 외 예외
             return ResponseEntity.internalServerError().body("서버 오류: " + e.getMessage());
         }
     }
 
     /** 피로도 예측 - 오늘 날짜 데이터 자동 조회 **/
     @PostMapping("/activities/predict-fatigue")
-    public ResponseEntity<?> predictFatigueToday(@RequestParam("userId") Long userId) {
+    public ResponseEntity<?> predictFatigueToday(@RequestParam("userId") String userId) { // ✅ String으로 변경
         SleepData todayRecord = sleepService.findTodayRecord(userId, LocalDate.now());
         if (todayRecord == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -47,10 +45,10 @@ public class SleepController {
         SleepData updated = sleepService.updateFatiguePrediction(todayRecord);
         return ResponseEntity.ok(updated);
     }
-    
+
     /** 수면 시간 예측 - 오늘 날짜 데이터 자동 조회 **/
     @PostMapping("/activities/predict-sleephours")
-    public ResponseEntity<?> predictSleepHoursToday(@RequestParam("userId") Long userId) {
+    public ResponseEntity<?> predictSleepHoursToday(@RequestParam("userId") String userId) { // ✅ String으로 변경
         SleepData todayRecord = sleepService.findTodayRecord(userId, LocalDate.now());
         if (todayRecord == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -60,9 +58,10 @@ public class SleepController {
         SleepData updated = sleepService.updateOptimalSleepRange(todayRecord);
         return ResponseEntity.ok(updated);
     }
-    
+
+    /** 최근 수면 기록 조회 **/
     @GetMapping("/recent")
-    public List<SleepData> getRecentSleepHours(@RequestParam ("userId") Long userId) {
-    	return sleepService.getRecentSleepHours(userId);
+    public List<SleepData> getRecentSleepHours(@RequestParam("userId") String userId) { // ✅ String으로 변경
+        return sleepService.getRecentSleepHours(userId);
     }
 }

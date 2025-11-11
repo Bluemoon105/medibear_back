@@ -5,8 +5,8 @@
 
 <mapper namespace="com.app.medibear.mapper.UserMapper">
 
-    <select id="findById" parameterType="long" resultType="com.app.medibear.model.User">
-        SELECT * FROM users WHERE id = #{id}
+    <select id="findById" parameterType="string" resultType="com.app.medibear.model.User">
+        SELECT * FROM users WHERE user_id = #{id}
     </select>
 
 </mapper>

@@ -16,7 +16,7 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
-    public User getUserById(Long userId) {
+    public User getUserById(String userId) {
         User user = userMapper.findById(userId);
         if (user == null)
             throw new IllegalArgumentException("User not found: " + userId);
