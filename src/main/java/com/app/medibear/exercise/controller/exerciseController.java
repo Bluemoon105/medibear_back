@@ -1,6 +1,6 @@
 package com.app.medibear.exercise.controller;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -10,18 +10,26 @@ import java.util.Map;
 @RequestMapping("/exercise")
 public class exerciseController {
 
-    @PostMapping("/analyze")
-    public ResponseEntity<Map> analyze(@RequestBody Map<String,Object> body){
+    private final RestTemplate rest = new RestTemplate();
 
-        RestTemplate rest  = new RestTemplate();
+    // 이렇게 써도 되지만
+//    @PostMapping("/analyze")
 
-        System.out.println("ui에서 받은 데이터"+body);
-        ResponseEntity<Map> result = rest.postForEntity("http://localhost:8080/exercise/analyze", body, Map.class);
+    // 제일 안전. json타입만 받는다 명시적 선언
+    @PostMapping(value="/analyze",
+            consumes=MediaType.APPLICATION_JSON_VALUE,
+            produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> analyze(@RequestBody String rawJson) {
+        HttpHeaders h = new HttpHeaders();
+        h.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> req = new HttpEntity<>(rawJson, h);
 
-        // fastapi 응답 데이터
-        System.out.println("fastapi응답 데이터:"+result.getBody());
+        ResponseEntity<String> res =
+                rest.postForEntity("http://localhost:5000/analyze", req, String.class);
 
-        return ResponseEntity.ok(result.getBody());
+        return ResponseEntity.status(res.getStatusCode())
+                .headers(res.getHeaders())
+                .body(res.getBody());
 
     }
 
