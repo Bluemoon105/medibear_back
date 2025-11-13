@@ -2,27 +2,12 @@ spring:
   application:
     name: medibear
 
-  # -------------------------------
-  # 🗄️ Database (PostgreSQL)
-  # -------------------------------
-#  datasource:
-#    url: jdbc:postgresql://localhost:5432/sleepdb
-#    username: postgres
-#    password: "0411"
-#    driver-class-name: org.postgresql.Driver
   datasource:
     url: jdbc:postgresql://localhost:5432/medibear
     username: myuser
     password: mypassword
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: "rlawjdrb123"
-    driver-class-name: org.postgresql.Driver
 
-  # -------------------------------
-  # 🧩 JPA 설정
-  # -------------------------------
   jpa:
     hibernate:
       ddl-auto: update   # (개발 중) create / update / validate / none
@@ -32,30 +17,17 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-
-
-
-  # -------------------------------
-  # 🔴 Redis 설정
-  # -------------------------------
   data:
     redis:
       host: localhost
       port: 6379
 
-# -------------------------------
-# 🌍 CORS / 외부 API 연동
-# -------------------------------
 cors:
   allowed:
     origins: "http://localhost:5173"
+  fastapi:
+    url: "http://localhost:8000"
 
-fastapi:
-  url: "http://localhost:8000"
-
-# -------------------------------
-# 🌐 서버 설정
-# -------------------------------
 server:
   port: 8080
   address: 0.0.0.0
