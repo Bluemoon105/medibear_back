@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.app.medibear.calorie.dao.CalorieDao">
+
+  <insert id="insertTest">
+    INSERT INTO member_tb (email, password, gender, birth_date, name)
+    VALUES
+      ('test1@example.com', 'pass1234', 'M', '1995-05-20', '홍길동')
+
+  </insert>
+
+</mapper>

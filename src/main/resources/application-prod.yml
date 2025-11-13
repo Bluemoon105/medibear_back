@@ -1,25 +1,27 @@
 spring:
   application:
-    name: CropAIProject
+    name: medibear
 
-#  datasource:
-#    url:
-#    username:
-#    password:
-#    driver-class-name:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres?sslmode=require
+    username: postgres.tyaurnypluxrrqnnbamz
+    password: 4kf6WscvdKVF1ZLH
+
 
 server:
   port: 8080
   address: 0.0.0.0
 
-#mybatis:
-#  mapper-locations: classpath:/mapper/*Mapper.xml
-#  type-aliases-package: com.example.todolistreact.**.dto
-#  configuration:
-#    map-underscore-to-camel-case: true
-#    jdbc-type-for-null: null
-
+mybatis:
+  mapper-locations: classpath:/mapper/**/*Mapper.xml
+#  type-aliases-package: com.app.medibear.**.dto
+  configuration:
+    map-underscore-to-camel-case: true
+    jdbc-type-for-null: null
 
 cors:
   allowed:
-    origins: "http://localhost:5173"
+    origins: http://localhost:5173
+  fastapi:
+    url: http://localhost:8000
