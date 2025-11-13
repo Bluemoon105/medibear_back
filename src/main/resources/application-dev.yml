@@ -5,15 +5,10 @@ spring:
   # -------------------------------
   # 🗄️ Database (PostgreSQL)
   # -------------------------------
-#  datasource:
-#    url: jdbc:postgresql://localhost:5432/sleepdb
-#    username: postgres
-#    password: "0411"
-#    driver-class-name: org.postgresql.Driver
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/ai_healthcare
     username: postgres
-    password: "rlawjdrb123"
+    password: ""password"
     driver-class-name: org.postgresql.Driver
 
   # -------------------------------
@@ -59,4 +54,4 @@ server:
   ## jwt 설정
 jwt:
   secret: medibear
-  expiration-time: 10000
+  expiration-time: 1000000000

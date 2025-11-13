@@ -1,67 +1,84 @@
-//package com.app.medibear.controller;
-//
-//import com.app.medibear.dto.UserInputRequest;
-//import com.app.medibear.model.SleepData;
-//import com.app.medibear.service.SleepService;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//import org.springframework.http.HttpStatus;
-//
-//import java.time.LocalDate;
-//import java.util.List;
-//
-//@RestController
-//@RequestMapping("/sleep")
-//public class SleepController {
-//
-//    private final SleepService sleepService;
-//
-//    public SleepController(SleepService sleepService) {
-//        this.sleepService = sleepService;
-//    }
-//
-//    /** 활동량 입력(하루 1회 제한) **/
-//    @PostMapping("/activities")
-//    public ResponseEntity<?> saveActivity(@RequestBody UserInputRequest input) {
-//        try {
-//            SleepData saved = sleepService.saveInitialRecord(input);
-//            return ResponseEntity.ok(saved);
-//        } catch (IllegalStateException e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        } catch (Exception e) {
-//            return ResponseEntity.internalServerError().body("서버 오류: " + e.getMessage());
-//        }
-//    }
-//
-//    /** 피로도 예측 - 오늘 날짜 데이터 자동 조회 **/
-//    @PostMapping("/activities/predict-fatigue")
-//    public ResponseEntity<?> predictFatigueToday(@RequestParam("userId") String userId) { // ✅ String으로 변경
-//        SleepData todayRecord = sleepService.findTodayRecord(userId, LocalDate.now());
-//        if (todayRecord == null) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                    .body("오늘 입력된 데이터가 없습니다.");
-//        }
-//
-//        SleepData updated = sleepService.updateFatiguePrediction(todayRecord);
-//        return ResponseEntity.ok(updated);
-//    }
-//
-//    /** 수면 시간 예측 - 오늘 날짜 데이터 자동 조회 **/
-//    @PostMapping("/activities/predict-sleephours")
-//    public ResponseEntity<?> predictSleepHoursToday(@RequestParam("userId") String userId) { // ✅ String으로 변경
-//        SleepData todayRecord = sleepService.findTodayRecord(userId, LocalDate.now());
-//        if (todayRecord == null) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                    .body("오늘 입력된 데이터가 없습니다.");
-//        }
-//
-//        SleepData updated = sleepService.updateOptimalSleepRange(todayRecord);
-//        return ResponseEntity.ok(updated);
-//    }
-//
-//    /** 최근 수면 기록 조회 **/
-//    @GetMapping("/recent")
-//    public List<SleepData> getRecentSleepHours(@RequestParam("userId") String userId) { // ✅ String으로 변경
-//        return sleepService.getRecentSleepHours(userId);
-//    }
-//}
+package com.app.medibear.controller;
+
+import com.app.medibear.dto.UserInputRequest;
+import com.app.medibear.model.SleepData;
+import com.app.medibear.service.SleepService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@RestController
+@RequestMapping("/sleep")
+public class SleepController {
+
+    private final SleepService sleepService;
+
+    public SleepController(SleepService sleepService) {
+        this.sleepService = sleepService;
+    }
+
+    /** 활동량 입력 — email 기반 */
+    @PostMapping("/activities")
+    public ResponseEntity<?> saveActivity(@RequestBody UserInputRequest input) {
+        try {
+            SleepData saved = sleepService.saveInitialRecord(input);
+            sleepService.updateFatiguePrediction(saved);
+            sleepService.updateOptimalSleepRange(saved);
+
+            return ResponseEntity.ok(new ApiResponse("데이터가 성공적으로 저장되었습니다.", saved));
+
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse(e.getMessage(), null));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse("서버 오류: " + e.getMessage(), null));
+        }
+    }
+
+    /** 오늘 피로도 예측 — email 기반 */
+    @GetMapping("/predict-fatigue")
+    public ResponseEntity<ApiResponse> predictFatigue(@RequestParam("email") String email) {
+
+        SleepData todayRecord = sleepService.findTodayRecord(email, LocalDate.now());
+
+        if (todayRecord == null) {
+            return ResponseEntity.ok(new ApiResponse("오늘 입력된 데이터가 없습니다.", null));
+        }
+
+        SleepData updated = sleepService.updateFatiguePrediction(todayRecord);
+
+        return ResponseEntity.ok(new ApiResponse("피로도 예측이 완료되었습니다.", updated));
+    }
+
+    /** 최적 수면시간 예측 — email 기반 */
+    @GetMapping("/predict-sleephours")
+    public ResponseEntity<ApiResponse> predictSleepHours(@RequestParam("email") String email) {
+
+        SleepData todayRecord = sleepService.findTodayRecord(email, LocalDate.now());
+
+        if (todayRecord == null) {
+            return ResponseEntity.ok(new ApiResponse("오늘 입력된 데이터가 없습니다.", null));
+        }
+
+        SleepData updated = sleepService.updateOptimalSleepRange(todayRecord);
+
+        return ResponseEntity.ok(new ApiResponse("수면 시간 예측이 완료되었습니다.", updated));
+    }
+
+    /** 최근 7일 데이터 조회 — email 기반 */
+    @GetMapping("/recent")
+    public ResponseEntity<ApiResponse> showRecent(@RequestParam("email") String email) {
+
+        List<SleepData> list = sleepService.getRecentSleepHours(email);
+
+        return ResponseEntity.ok(new ApiResponse("최근 7일 데이터 조회 완료", list));
+    }
+
+    /** 공통 응답 DTO */
+    record ApiResponse(String message, Object data) {}
+}
