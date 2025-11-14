@@ -35,8 +35,8 @@ public class SleepChatController {
     }
 
     /** 일간 리포트 */
-    @GetMapping("/report/daily/{email}")
-    public ResponseEntity<Map<String, Object>> dailyReport(@PathVariable String email, HttpServletRequest request) {
+    @GetMapping("/report/daily")
+    public ResponseEntity<Map<String, Object>> dailyReport(@RequestParam ("email") String email, HttpServletRequest request) {
     	String authorizationHeader = request.getHeader("Authorization");
         String memberId =  getMemberId.getMemberId(authorizationHeader);
     	String report = llmService.getDailyReport(email);
@@ -44,20 +44,11 @@ public class SleepChatController {
     }
 
     /** 주간 리포트 */
-    @GetMapping("/report/weekly/{email}")
-    public ResponseEntity<Map<String, Object>> weeklyReport(@PathVariable String email, HttpServletRequest request) {
+    @GetMapping("/report/weekly")
+    public ResponseEntity<Map<String, Object>> weeklyReport(@RequestParam ("email") String email, HttpServletRequest request) {
     	String authorizationHeader = request.getHeader("Authorization");
         String memberId =  getMemberId.getMemberId(authorizationHeader);
     	String report = llmService.getWeeklyReport(email);
         return ResponseEntity.ok(Map.of("report", report));
-    }
-
-    /** 대화 기록 조회 */
-    @GetMapping("/history/{email}")
-    public ResponseEntity<Map<String, Object>> history(@PathVariable String email, HttpServletRequest request) {
-    	String authorizationHeader = request.getHeader("Authorization");
-        String memberId =  getMemberId.getMemberId(authorizationHeader);
-    	Map<String, Object> history = llmService.getChatHistory(email);
-        return ResponseEntity.ok(history);
     }
 }
