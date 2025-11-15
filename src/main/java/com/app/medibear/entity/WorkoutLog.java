@@ -6,6 +6,8 @@ import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "workout_log_tb")
 @Getter
@@ -29,8 +31,12 @@ public class WorkoutLog {
     @Column(name = "calories_burned",  nullable = false)
     private Double caloriesBurned;
 
+    @Column(name= "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_no", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
+
 }

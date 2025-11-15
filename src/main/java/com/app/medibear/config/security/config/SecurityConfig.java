@@ -88,7 +88,6 @@ public class SecurityConfig {
 //                                .requestMatchers("/admin/**").hasRole("ADMIN")  //  특정 하나의 권한만 허용
                                 .requestMatchers("/api/ai/calorie/predict").permitAll()
                                 .requestMatchers("/api/ai/calorie/analyze").permitAll()
-                                .requestMatchers("/ophtha/").permitAll()
                                 .requestMatchers("/api/auth/refresh", "/css/**", "/js/**", "/images/**",
                                         "/join", "/api/join", "/api/non-member/**","/static/**",
                                         "/api/checkId","/api/signUp","/api/getProfileImg","/img/**","/rec/**",

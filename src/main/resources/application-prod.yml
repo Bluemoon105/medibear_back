@@ -5,6 +5,13 @@ server:
 spring:
   application:
     name: medibear
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres?sslmode=require
+    username: postgres.tyaurnypluxrrqnnbamz
+    password: 4kf6WscvdKVF1ZLH
+
   jpa:
     hibernate:
       ddl-auto: update   # (개발 중) create / update / validate / none
@@ -14,14 +21,10 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres?sslmode=require
-    username: postgres.tyaurnypluxrrqnnbamz
-    password: 4kf6WscvdKVF1ZLH
+
 
 cors:
   allowed:
     origins: http://localhost:5173
-  fastapi:
-    url: http://localhost:8000
+fastapi:
+  url: http://localhost:8000
