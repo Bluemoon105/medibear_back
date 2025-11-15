@@ -1,4 +1,6 @@
 package com.app.medibear.calorie.dto;
+
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,9 +11,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor  // 모든 필드 생성자
 public class CaloriePredictRequest {
 
+
+
     private double weight_kg;
+
+
     private double bmi;
+
+
     private String activity_type;
+
     private int duration_minutes;
 
 

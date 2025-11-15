@@ -21,8 +21,6 @@ public class AuthController {
 	
 	@PostMapping("/signUp")
 	public ResponseEntity<?> signup(@RequestBody SignUpRequest req) {
-		System.out.println("[AuthConroller] /api/signUp");
-		
 		try {
 			User saved = userService.createUser(req);
 			return ResponseEntity.ok(saved);
