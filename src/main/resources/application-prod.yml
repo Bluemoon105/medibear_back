@@ -28,3 +28,7 @@ cors:
     origins: http://localhost:5173
 fastapi:
   url: http://localhost:8000
+
+jwt:
+  secret: medibear
+  expiration-time: 1000000000

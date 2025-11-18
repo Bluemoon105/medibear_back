@@ -8,6 +8,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 //시큐리티가 filter를 가지고 있는데  그 필터중에서 BasicAuthenticationFilter라는 것이 있다.
@@ -44,67 +47,65 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         String jwtHeader = request.getHeader("Authorization");
         System.out.println("jwtHeader = " + jwtHeader);
 
-        //refresh Token을 위해서
         String uri = request.getRequestURI();
 
-        // refresh API는 제외
+        // refresh API는 인증 필터 실행 X
         if (uri.equals("/api/auth/refresh")) {
             chain.doFilter(request, response);
             return;
         }
 
-        //header가 있는지 확인
+        // Authorization 헤더 없음 → 다음 필터로 넘김
         if (jwtHeader == null || !jwtHeader.startsWith("Bearer ")) {
-            //다음 필터로 요청을 넘깁니다.
             chain.doFilter(request, response);
             return;
         }
 
-//        //client에서 온 Jwt토큰을 검증해서 정상적인 사용자인지 확인
-//        String jwtToken = request.getHeader("Authorization").replace("Bearer ", "");
-//        String memberId = JWT.require(Algorithm.HMAC512("cos")).build().verify(jwtToken).getClaim("username").asString();
-
-        //redis 떄문에 처리함
-        // client에서 온 Jwt토큰을 검증해서 정상적인 사용자인지 확인
         String jwtToken = jwtHeader.replace("Bearer ", "");
         String memberId = null;
+
         try {
             memberId = JWT.require(Algorithm.HMAC512(jwtProperties.getSecret()))
-                    .build()
-                    .verify(jwtToken)
-                    .getClaim("memberId").asString();
+                .build()
+                .verify(jwtToken)
+                .getClaim("memberId").asString();
+
         } catch (TokenExpiredException e) {
-            // 토큰 만료시 401 에러 + 에러 메시지
+            // 🔥 AccessToken 만료 → React가 refresh 시도하도록 code 포함해 반환
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write("{\"code\":\"EXPIRED_ACCESS_TOKEN\", \"message\":\"AccessToken has expired.\"}");
-            response.getWriter().flush(); // ✅ 추가해보세요
+
+            Map<String, String> result = new HashMap<>();
+            result.put("code", "EXPIRED_ACCESS_TOKEN");
+            result.put("message", "AccessToken has expired.");
+
+            response.getWriter().write(new ObjectMapper().writeValueAsString(result));
+            response.getWriter().flush();
             return;
+
         } catch (Exception e) {
-            // 토큰 변조 또는 기타 오류 → 403
+            // 🔥 토큰 변조 / 잘못된 토큰
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write("{\"code\":\"INVALID_TOKEN\", \"message\":\"Invalid or tampered token.\"}");
-            response.getWriter().flush(); // ✅ 추가해보세요
+            response.getWriter().flush();
             return;
         }
-        //서명이 정상적으로 된경우
+
         if (memberId != null) {
             System.out.println(" 인가쪽 제대로 시행된다는거지");
             System.out.println("memberId = " + memberId);
-            // 이부분에서 username이 db에 있으면 찾아지는거니까 인증이됨
-            Member userEntity = memberRepository.findByEmail(memberId);
 
+            Member userEntity = memberRepository.findByEmail(memberId);
             PrincipalDetails principalDetails = new PrincipalDetails(userEntity);
 
-            //jwt 토큰 서명을 통해서 서명이 정상이면 Authentication 객체를 만들어준다.
-            Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
-            // 강제로 시큐리티의 세션에 접근하여 Authentication객체를 저장
+            Authentication authentication =
+                new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            //다음 필터로 요청을 넘깁니다.
             chain.doFilter(request, response);
         }
-
     }
+
 }

@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -82,20 +83,23 @@ public class SecurityConfig {
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint) // 401 예외처리부분 로그인 실패시
                 )
                 .authorizeHttpRequests(auth -> auth
+
                                 .requestMatchers("/favicon.ico").permitAll() // ✅ favicon.ico 허용
                                 .requestMatchers("/user/**").authenticated()  // 이부분은 사용자가 jwt토큰을 들고 요청하면 인증만되어있다고 확인이 된다면 통과 시키는 부분
 //                                .requestMatchers("/manager/**").hasAnyRole("MANAGER", "ADMIN")  // 여러 권한중 하나만 있어도 허용
 //                                .requestMatchers("/admin/**").hasRole("ADMIN")  //  특정 하나의 권한만 허용
-                                .requestMatchers("/api/ai/calorie/predict").permitAll()
-                                .requestMatchers("/api/ai/calorie/analyze").permitAll()
+//                                .requestMatchers("/api/calorie/analyze").permitAll()
                                 .requestMatchers("/api/auth/refresh", "/css/**", "/js/**", "/images/**",
                                         "/join", "/api/join", "/api/non-member/**","/static/**",
                                         "/api/checkId","/api/signUp","/api/getProfileImg","/img/**","/rec/**",
                                         "/api/checkName").permitAll() // 로그인 페이지, 정적 파일은 모두 허용
                                 .requestMatchers("/").permitAll() // 기본 홈 페이지도 허용
-                                .requestMatchers("*").permitAll()
-                                .requestMatchers("/*").permitAll()
-                                .anyRequest().authenticated() // 나머지 요청은 인증이 필요
+                                .requestMatchers("/api/calorie/**").authenticated()
+//                                .requestMatchers("*").permitAll()
+//                                .requestMatchers("/*").permitAll()
+
+
+                        .anyRequest().authenticated() // 나머지 요청은 인증이 필요
 //                                .anyRequest().permitAll()
                 );
 //                .oauth2Login(oauth2 -> oauth2
@@ -119,7 +123,6 @@ public class SecurityConfig {
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
-
         // 클라이언트에서 읽을 수 있도록 Authorization 헤더 노출 추가
         configuration.addExposedHeader("Authorization");
         //refreshToken 때문에 노출해야된다.  근데 이부분은 의미 없어서 빠져도 노상관

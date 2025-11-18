@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class Member {
 
     @Id
@@ -44,12 +45,11 @@ public class Member {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     // 양방향 매핑 (선택사항)₩
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DailyActivities> dailyActivitiesList;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WorkoutLog> workoutLogs;
+    private List<FitnessLog> fitnessLogs;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Physical> physicalList;
 }
