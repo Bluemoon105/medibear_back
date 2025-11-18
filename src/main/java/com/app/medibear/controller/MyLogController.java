@@ -1,7 +1,6 @@
 package com.app.medibear.controller;
 
 import com.app.medibear.dto.calorie.MyLogCalorieResponse;
-import com.app.medibear.service.CalorieService;
 import com.app.medibear.service.MyLogService;
 import com.app.medibear.utils.GetMemberId;
 import jakarta.servlet.http.HttpServletRequest;

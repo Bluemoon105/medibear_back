@@ -1,6 +1,5 @@
 package com.app.medibear.entity;
 
-import com.app.medibear.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
