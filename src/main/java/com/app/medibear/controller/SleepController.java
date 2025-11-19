@@ -34,8 +34,6 @@ public class SleepController {
          String memberId =  getMemberId.getMemberId(authorizationHeader);
         try {
             SleepData saved = sleepService.saveInitialRecord(input);
-            sleepService.updateFatiguePrediction(saved);
-            sleepService.updateOptimalSleepRange(saved);
 
             return ResponseEntity.ok(new ApiResponse("데이터가 성공적으로 저장되었습니다.", saved));
 
