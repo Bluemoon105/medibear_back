@@ -26,6 +26,8 @@ public class CaloriePredictRequest {
 
     private double bmi;
 
+    private String gender;
+
 
 }
 

@@ -11,13 +11,13 @@ import java.util.List;
 @Repository
 public interface FitnessLogRepository extends JpaRepository<FitnessLog, Long> {
     @Query("""
-    SELECT f FROM FitnessLog f
-    WHERE f.member.memberNo= :memberNo
-        AND f.createdAt >= :afterDate
-    ORDER BY f.createdAt DESC
+        SELECT f
+        FROM FitnessLog f
+        WHERE f.member.memberNo = :memberNo
+        AND f.createdAt >= :weekAgo
+        ORDER BY f.createdAt DESC
     """)
-    List<FitnessLog> findRecentFitnessLogs(Long memberNo, LocalDateTime afterDate);
+    List<FitnessLog> findRecentFitnessLogs(Long memberNo, LocalDateTime weekAgo);
 
-
-
+    FitnessLog findTopByMember_MemberNoOrderByCreatedAtDesc(Long memberNo);
 }

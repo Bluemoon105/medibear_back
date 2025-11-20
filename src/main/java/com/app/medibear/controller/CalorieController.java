@@ -39,7 +39,7 @@ public class CalorieController {
         // 이메일값
         String memberId =  getMemberId.getMemberId(authorizationHeader);
         CalorieAnalysisResponse report = calorieService.getCalorieAnalyze(memberId);
-        log.info("report: {}", report);
+//        log.info("report: {}", report);
         return report;
     }
 

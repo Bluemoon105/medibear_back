@@ -1,9 +1,6 @@
 package com.app.medibear.service;
 
-import com.app.medibear.dto.calorie.CalorieAnalysisResponse;
-import com.app.medibear.dto.calorie.CalorieLogDto;
-import com.app.medibear.dto.calorie.CaloriePredictRequest;
-import com.app.medibear.dto.calorie.CaloriePredictResponse;
+import com.app.medibear.dto.calorie.*;
 import com.app.medibear.entity.FitnessReport;
 import com.app.medibear.entity.Member;
 import com.app.medibear.entity.FitnessLog;
@@ -46,6 +43,19 @@ public class CalorieService{
 
         String url = fastapiUrl + "/calorie/predict";
 
+        Member member = memberRepository.findByEmail(memberId);
+        if (member == null) {
+            throw new RuntimeException("Member 조회 실패 → ID: " + memberId);
+        }
+        // gender 추가 (Enum → "M"/"F")
+        calorieRequest.setGender(member.getGender().name());
+
+        // BMI 직접 계산
+        double heightM = calorieRequest.getHeight_cm() / 100.0;
+        double bmi = calorieRequest.getWeight_kg() / (heightM * heightM);
+        calorieRequest.setBmi(bmi);
+
+        // fastAPI 전달
         ResponseEntity<CaloriePredictResponse> responseEntity =
             restTemplate.postForEntity(
                 url,
@@ -58,16 +68,6 @@ public class CalorieService{
         if (response == null) {
             throw new RuntimeException("FastAPI로 부터 빈 응답이 옴");
         }
-
-        Member member = memberRepository.findByEmail(memberId);
-
-        if (member == null) {
-            throw new RuntimeException("🔥 Member 조회 실패 → ID: " + memberId);
-        }
-
-        // ⭐ BMI 직접 계산
-        double heightM = calorieRequest.getHeight_cm() / 100.0;
-        double bmi = calorieRequest.getWeight_kg() / (heightM * heightM);
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -95,10 +95,10 @@ public class CalorieService{
      */
     public CalorieAnalysisResponse getCalorieAnalyze(String memberId) {
 
-        // 🔸 최근 7일 기준 날짜 계산
+        // 최근 7일 기준 날짜 계산
         LocalDateTime weekAgo = LocalDateTime.now().minusDays(7);
 
-        // 🔸 사용자 조회
+        // 사용자 조회
         Member member = memberRepository.findByEmail(memberId);
         if (member == null) {
             throw new RuntimeException("회원 정보를 찾을 수 없습니다: " + memberId);
@@ -107,11 +107,17 @@ public class CalorieService{
         Long memberNo = member.getMemberNo();
         log.info("service memberNo: {}", memberNo);
 
-        // 🔸 최근 7일 운동 로그 조회
+        // 최근 7일 운동 로그 조회
         List<FitnessLog> logs = fitnessLogRepository.findRecentFitnessLogs(memberNo, weekAgo);
-        log.info("logs: {}", logs);
 
-        // 🔸 FitnessLog → CalorieLogDto 변환
+        // 최신 FitnessLog 조회
+        FitnessLog latest = fitnessLogRepository.findTopByMember_MemberNoOrderByCreatedAtDesc(memberNo);
+
+        if (latest == null) {
+            throw new RuntimeException("최신 FitnessLog 데이터가 없습니다.");
+        }
+
+        // FitnessLog → CalorieLogDto 변환
         List<CalorieLogDto> calorieLog = logs.stream()
             .map(log -> new CalorieLogDto(
                 log.getWeightKg(),
@@ -122,14 +128,28 @@ public class CalorieService{
             ))
             .toList();
 
-        // 🔸 FastAPI URI
+        // FastAPI
+        CalorieAnalyzeRequest request = new CalorieAnalyzeRequest(
+            new CalorieAnalyzeRequest.MemberInfo(
+                member.getName(),
+                member.getGender().name()
+            ),
+            new CalorieAnalyzeRequest.LatestFitnessInfo(
+                latest.getHeightCm(),
+                latest.getWeightKg(),
+                latest.getBmi()
+            ),
+            calorieLog
+        );
+
+        // FastAPI URI
         String url = fastapiUrl + "/calorie/llm/analyze";
 
-        // 🔸 FastAPI에 POST 요청
+        // FastAPI에 POST 요청
         ResponseEntity<CalorieAnalysisResponse> responseEntity =
             restTemplate.postForEntity(
                 url,
-                calorieLog,
+                request,
                 CalorieAnalysisResponse.class
             );
 
@@ -151,6 +171,4 @@ public class CalorieService{
         // 🔥 저장 후 그대로 반환 (리액트에서 상세 분석 사용)
         return response;
     }
-
-
 }
