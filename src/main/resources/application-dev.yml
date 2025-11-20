@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: medibear
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ai_healthcare
+    username: postgres
+    password: "0411"
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update   # (개발 중) create / update / validate / none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+cors:
+  allowed:
+    origins: "http://localhost:5173"
+
+fastapi:
+  url: "http://localhost:8000"
+
+server:
+  port: 8080
+  address: 0.0.0.0
+
+  ## jwt 설정
+jwt:
+  secret: medibear
+  expiration-time: 600000
