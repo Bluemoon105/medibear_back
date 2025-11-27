@@ -121,6 +121,7 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedOrigin("http://localhost:5173");
         configuration.addAllowedOrigin("http://192.168.0.32:5173");
+        configuration.addAllowedOrigin("https://medibear.vercel.app");
         //.allowedOriginPatterns("*")  // ✅ Spring Boot 2.4 이상에서 지원
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
