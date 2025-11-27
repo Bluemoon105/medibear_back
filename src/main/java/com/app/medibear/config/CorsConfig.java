@@ -9,7 +9,7 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/exercise/**")
                 //백엔드 API 접근을 허용할 "출처(origin)" 목록
-                .allowedOrigins("http://localhost:5173","http://127.0.0.1:5173")
+                .allowedOrigins("http://localhost:5173","http://127.0.0.1:5173", "https://medibear.vercel.app/")
 //                        "http://localhost:3000","http://127.0.0.1:3000")
                 .allowedMethods("GET","POST","OPTIONS")
                 .allowedHeaders("*")
