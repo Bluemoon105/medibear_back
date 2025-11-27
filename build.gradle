@@ -8,12 +8,6 @@ group = 'com.app'
 version = '0.0.1-SNAPSHOT'
 description = 'medibear'
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
