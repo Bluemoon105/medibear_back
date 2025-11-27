@@ -23,9 +23,9 @@ spring:
 
   data:
     redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
-      password: ${REDIS_PASSWORD}
+      host: ${REDISHOST}
+      port: ${REDISPORT}
+      password: ${REDISPASSWORD}
       timeout: 6000       # 선택이지만 넣어두면 안정성 ↑
       ssl: false          # Railway Redis는 기본적으로 SSL off
 
