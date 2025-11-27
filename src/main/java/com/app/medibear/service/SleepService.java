@@ -37,7 +37,7 @@ public class SleepService {
 
         User user = userService.getUserByEmail(input.getEmail());
         Long memberNo = user.getMemberNo();
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
         if (sleepDataRepository.existsByMemberNoAndDate(memberNo, today)) {
             throw new IllegalStateException("오늘 기록은 이미 존재합니다.");
@@ -62,12 +62,19 @@ public class SleepService {
         User user = userService.getUserByEmail(email);
         Long memberNo = user.getMemberNo();
 
-        return sleepDataRepository.findByMemberNoAndDate(memberNo, date)
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+
+        return sleepDataRepository.findByMemberNoAndDate(memberNo, today)
                 .orElse(null);
     }
 
     /** 피로도 예측 */
     public SleepData updateFatiguePrediction(SleepData record) {
+
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        if (!record.getDate().equals(today)) {
+            throw new IllegalStateException("오늘 데이터가 아니므로 피로도 예측을 수행할 수 없습니다.");
+        }
 
         User user = userService.getUserByMemberNo(record.getMemberNo());
         int age = userService.calculateAge(user.getBirthDate());
@@ -94,13 +101,18 @@ public class SleepService {
         record.setPredictedSleepQuality(((Number) resp.get("predicted_sleep_quality")).doubleValue());
         record.setPredictedFatigueScore(((Number) resp.get("predicted_fatigue_score")).doubleValue());
         record.setConditionLevel((String) resp.getOrDefault("condition_level", "보통"));
-        record.setUpdatedAt(LocalDateTime.now());
-
+        record.setUpdatedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+        
         return sleepDataRepository.save(record);
     }
 
     /** 최적 수면시간 예측 */
     public SleepData updateOptimalSleepRange(SleepData record) {
+        
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        if (!record.getDate().equals(today)) {
+            throw new IllegalStateException("오늘 데이터가 아니므로 피로도 예측을 수행할 수 없습니다.");
+        }
 
         User user = userService.getUserByMemberNo(record.getMemberNo());
         int age = userService.calculateAge(user.getBirthDate());
@@ -125,7 +137,7 @@ public class SleepService {
         if (resp == null) throw new IllegalStateException("FastAPI 응답 없음");
 
         record.setRecommendedSleepRange((String) resp.get("recommended_sleep_range"));
-        record.setUpdatedAt(LocalDateTime.now());
+        record.setUpdatedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
 
         return sleepDataRepository.save(record);
     }
