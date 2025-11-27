@@ -24,7 +24,7 @@ spring:
 
 cors:
   allowed:
-    origins: "https://medibear-front.vercel.app/"
+    origins: "https://medibear.vercel.app/"
 
 fastapi:
   url: "https://medibearfastapi-production.up.railway.app"
