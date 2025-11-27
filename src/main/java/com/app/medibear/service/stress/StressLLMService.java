@@ -8,4 +8,5 @@ public interface StressLLMService {
     String generateCoaching(StressReportDTO dto);
     String forwardAudioToFastApi(MultipartFile file);
     String chat(Map<String, Object> body);
+    String agentStep(Map<String, Object> bodyMap);
 }
