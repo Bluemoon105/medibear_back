@@ -27,7 +27,7 @@ cors:
     origins: "http://localhost:5173"
 
 fastapi:
-  url: "http://localhost:8000"
+  url: "https://medibearfastapi-production.up.railway.app"
 
 server:
   port: 8080
