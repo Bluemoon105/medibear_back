@@ -31,11 +31,11 @@ spring:
 
 cors:
   allowed:
-    origins: https://medibear.vercel.app
+    origins: "https://medibear.vercel.app"
 
 fastapi:
   # 🔥 실제 FastAPI 배포 URL로 변경해야 함!
-  url: ${FASTAPI_URL}
+  url: "https://medibearfastapi-production.up.railway.app"
 
 jwt:
   secret: ${JWT_SECRET}
