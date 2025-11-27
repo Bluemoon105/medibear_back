@@ -128,6 +128,7 @@ public class SecurityConfig {
         configuration.setAllowCredentials(true);
         // 클라이언트에서 읽을 수 있도록 Authorization 헤더 노출 추가
         configuration.addExposedHeader("Authorization");
+        configuration.addExposedHeader("Set-Cookie");
         //refreshToken 때문에 노출해야된다.  근데 이부분은 의미 없어서 빠져도 노상관
 //        configuration.addExposedHeader("Set-Cookie");
 
